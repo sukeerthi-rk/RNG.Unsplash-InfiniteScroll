@@ -1,43 +1,42 @@
 let imgContainer = document.querySelector(".image-container");
-
+let loader = document.querySelector(".loader");
 let ready = false;
 let imagesLoaded = 0;
 let imageArr = [];
-let totalImages = imageArr.length;
+let totalImages = 0;
 let page = 0;
 const apiKey = "W7OocGCSK-Mrsz4NF8639FI0xuVNeM4JCXaBHXjIO-M";
-function pageLoaded() {
+const unsplashApiUrl = `https://api.unsplash.com/photos/?client_id=${apiKey}&page=${page}`;
 
-    imagesLoaded + 10;
+function pageLoaded() {
+    imagesLoaded++;
     if (imagesLoaded === totalImages) {
         ready = true;
+        loader.hidden = true;
     }
 }
 
 function addImgDom() {
-
-    for (let i = 0; i < imageArr.length; i++) {
-
+    totalImages += imageArr.length;
+    imageArr.forEach((photo) => {
+        let item = document.createElement("a");
+        item.href = photo.links.html;
+        item.target = "_blank";
         let image = document.createElement("img");
-        image.src = imageArr[i].urls.regular;
-        imgContainer.appendChild(image);
-        page++;
-        if (i == imageArr.length - 1) {
-            image.addEventListener('load', pageLoaded());
-        }
-
-    }
-
-
+        image.src = photo.urls.regular;
+        image.alt = photo.alt_description;
+        image.title = photo.alt_description;
+        image.addEventListener('load', pageLoaded);
+        item.appendChild(image);
+        imgContainer.appendChild(item);
+    })
 }
 async function getImg() {
-    page++;
-    const unsplashApiUrl = `https://api.unsplash.com/photos/?client_id=W7OocGCSK-Mrsz4NF8639FI0xuVNeM4JCXaBHXjIO-M&page=${page}`;
     try {
         let response = await fetch(unsplashApiUrl);
         imageArr = await response.json();
+        totalImages + 10;
         addImgDom();
-        pageLoaded();
     }
     catch (e) {
         console.log(e);
@@ -45,7 +44,9 @@ async function getImg() {
 }
 window.addEventListener('scroll', () => {
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000 && ready) {
+        ready = false;
         getImg();
+        page++;
     }
 })
 getImg();
