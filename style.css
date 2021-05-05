@@ -49,6 +49,7 @@ h1 {
     right: 0;
     color: grey;
     font-size: 0.7em;
+    font-weight: 300;
 }
 
 @media screen and (max-width:600px) {
