@@ -43,6 +43,7 @@ h1 {
 }
 
 .signature {
+    font-family: sans-serif;
     position: fixed;
     bottom: 0;
     right: 0;
